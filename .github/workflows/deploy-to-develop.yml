@@ -27,7 +27,7 @@ jobs:
   
   notify:
     runs-on: ubuntu-latest
-    name: Notify.
+    name: Notify 
     needs: deploy-develop-env
     strategy:
       matrix:
