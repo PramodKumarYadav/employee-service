@@ -27,7 +27,7 @@ jobs:
   
   notify:
     runs-on: ubuntu-latest
-    name: Notify test repositories that deployment is completed on develop env and thus they can run tests specific to this service.
+    name: Notify.
     needs: deploy-develop-env
     strategy:
       matrix:
