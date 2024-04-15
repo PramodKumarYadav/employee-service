@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: check
     steps:
-      - name: Deploy test environment, if tests were successful
+      - name: Deploy test environment
         run: echo "Deploying test environment"
         # Add steps here to deploy test environment, when ready. 
         # Then, in the next job, send a notification to the test repositories to run tests on the new "Test" environment.
