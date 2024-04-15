@@ -21,8 +21,8 @@ jobs:
       - name: Tests failed
         if: ${{ github.event.client_payload.TEST_RUN_RESULT == 'failure' || github.event.client_payload.TEST_RUN_RESULT == 'cancelled' || github.event.client_payload.TEST_RUN_RESULT == 'skipped'}}
         run: |
-            echo "::error title=Tests failed. Test Env automatic deployment cancelled. Check failures and if the failures are acceptable, a manual deployment can be triggered from this workflow file."
             exit 1
+            echo "::error title=Tests failed. Test Env automatic deployment cancelled. Check failures and if the failures are acceptable, a manual deployment can be triggered from this workflow file."           
 
       - name: Tests passed
         if: ${{ github.event.client_payload.TEST_RUN_RESULT == 'success' }}
