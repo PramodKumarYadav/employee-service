@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
        # repos: [ 'PramodKumarYadav/zero',  'PramodKumarYadav/api-tests',  'PramodKumarYadav/mobile-tests', 'PramodKumarYadav/browser-tests']
-        repos: [ 'PramodKumarYadav/zero' ]
+        repos: [ 'PramodKumarYadav/zero',  'PramodKumarYadav/employee-service' ]
     steps:
       - name: Dispatch event to repository
         uses: peter-evans/repository-dispatch@v2
