@@ -1,10 +1,9 @@
 # This is a basic workflow to help you get started with Actions
-name: Trigger tests
+name: Listen to event 
 
 on:
-  push:
-    branches: ["staging"]  # Every time code merges to staging branch, build application.
-  workflow_dispatch:
+  repository_dispatch:
+    types: [deployment-completed-notification-event]
 
 jobs:
   deploy:
