@@ -18,7 +18,7 @@ jobs:
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
           workflow: trigger-tests-on-an-external-event
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ matrix.repos }}
           inputs: '{ "message": "blah blah", "debug": true }'
 
