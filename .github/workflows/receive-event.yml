@@ -1,0 +1,30 @@
+# This is a basic workflow to help you get started with Actions
+name: Trigger tests
+
+on:
+  push:
+    branches: ["staging"]  # Every time code merges to staging branch, build application.
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Requester details
+        run: >
+          echo "Repository: ${{ github.event.client_payload.github.event.repository.full_name }}"
+          echo "Test run result: ${{ github.event.client_payload.TEST_RUN_RESULT }}"
+          echo "Test Env: ${{ github.event.client_payload.TEST_ENV }}"
+          echo "Tags of tests executed: ${{ github.event.client_payload.TAG }}"
+
+      - name: Do not deploy test environment, if tests have failed
+        if: ${{ github.event.client_payload.TEST_RUN_RESULT != 'success' }}
+        run: > 
+          echo "Tests failed. Pipeline will not proceed to automatically deploy test environment."
+          exit 1
+
+      - name: Deploy test environment, if tests were successful
+        if: ${{ github.event.client_payload.TEST_RUN_RESULT == 'success' }}
+        run: echo "Deploying test environment"
+        # Add steps here to deploy test environment, when ready. 
+        # Then, in the next job, send a notification to the test repositories to run tests on the new "Test" environment.

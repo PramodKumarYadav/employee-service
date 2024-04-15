@@ -4,6 +4,7 @@ name: Trigger tests
 on:
   push:
     branches: ["develop"]  # Every time code merges to main branch, build application.
+  
   workflow_dispatch:
 
 jobs:
@@ -42,5 +43,5 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN_TO_TRIGGER_EVENTS }}
           repository: ${{ matrix.repos }}
           event-type: deployment-completed-notification-event
-          client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "DEVELOP" , "TAG": "${{ github.event.repository.name }}"}'
+          client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "DEVELOP" , "TAG": "${{ github.event.repository.name }}", "TEST_RUN_RESULT": "failure"}'
 
