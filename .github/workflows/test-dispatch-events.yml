@@ -8,7 +8,6 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     name: Notify test repositories that deployment is completed on develop env and thus they can run tests specific to this service.
-    needs: deploy-develop-env
     strategy:
       matrix:
        # repos: [ 'PramodKumarYadav/zero',  'PramodKumarYadav/api-tests',  'PramodKumarYadav/mobile-tests', 'PramodKumarYadav/browser-tests']
