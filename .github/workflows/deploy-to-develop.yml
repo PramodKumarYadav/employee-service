@@ -35,7 +35,7 @@ jobs:
       - name: Dispatch event to repository
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_LATEST }}
           repository: ${{ matrix.repos }}
           event-type: ${{ github.event.repository.name }}-dev-deployed
           client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "dev" ,  "TAG_OF_TESTS_TO_RUN": "${{ github.event.repository.name }}"}'
