@@ -39,7 +39,7 @@ jobs:
           token: ${{ secrets.PAT_LATEST }}
           repository: ${{ matrix.repos }}
           event-type: ${{ github.event.repository.name }}-dev-deployed
-          client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "dev" ,  "TAG_OF_TESTS_TO_RUN": "${{ github.event.repository.name }}"}'
+          client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "dev" ,  "TAG_OF_TESTS_TO_RUN": "${{ github.event.repository.name }}", "TAG": "docker-image-tag-from-another-workflow"}'
 
   watch-test-status:
     needs: notify
