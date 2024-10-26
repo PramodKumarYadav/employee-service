@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Dummy steps just to demonstrate the concept
       - name: setup infra
@@ -33,7 +33,7 @@ jobs:
         repos: [ 'PramodKumarYadav/playwright-sandbox' ]
     steps:
       - name: Dispatch event to repository
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3.0.0
         with:
           token: ${{ secrets.PAT_LATEST }}
           repository: ${{ matrix.repos }}
