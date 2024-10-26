@@ -9,6 +9,7 @@ run-name: deploy ${{ github.event.repository.name }} to dev
 
 jobs:
   deploy_service-to-dev:
+    name: deploy employee-service to dev
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +27,7 @@ jobs:
   
   notify:
     runs-on: ubuntu-latest
-    name: Notify test repositories that deployment is completed on main env and thus they can run tests specific to this service.
+    name: trigger e2e tests.
     needs: deploy_service-to-dev
     strategy:
       matrix:
