@@ -1,0 +1,40 @@
+# This is a basic workflow to help you get started with Actions
+name: Listen to event 
+
+on:
+  repository_dispatch:
+    types: [deployment-completed-notification-event]
+
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Requester details
+        run: |
+          echo "Repository: ${{ github.event.client_payload.github.event.repository.full_name }}"
+          echo "Test run result: ${{ github.event.client_payload.TEST_RUN_RESULT }}"
+          echo "Test Env: ${{ github.event.client_payload.TEST_ENV }}"
+          echo "Tags of tests executed: ${{ github.event.client_payload.TAG }}"
+
+      - name: Tests failed
+        if: ${{ github.event.client_payload.TEST_RUN_RESULT == 'failure' || github.event.client_payload.TEST_RUN_RESULT == 'cancelled' || github.event.client_payload.TEST_RUN_RESULT == 'skipped'}}
+        run: |
+            echo "Tests failed. Test Env automatic deployment cancelled. Check failures and if the failures are acceptable, a manual deployment can be triggered from this workflow file."           
+            exit 1
+
+      - name: Tests passed
+        if: ${{ github.event.client_payload.TEST_RUN_RESULT == 'success' }}
+        run: echo "Tests successful. Test Env can be deployed."
+        # Add steps here to deploy test environment, when ready. 
+        # Then, in the next job, send a notification to the test repositories to run tests on the new "Test" environment.
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Deploy test environment
+        run: echo "Deploying test environment"
+        # Add steps here to deploy test environment, when ready. 
+        # Then, in the next job, send a notification to the test repositories to run tests on the new "Test" environment.
