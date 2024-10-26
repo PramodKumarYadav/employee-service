@@ -85,3 +85,11 @@ jobs:
           event-type: ${{ github.event.repository.name }}-test-deployed
           client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "test" ,  "TAG_OF_TESTS_TO_RUN": "${{ github.event.repository.name }}"}'
 
+  watch-test-status:
+    needs: notify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Watch Test Results on GitHub and BrowserStack
+        run: |
+          echo "GitHub run status: https://github.com/PramodKumarYadav/playwright-sandbox/actions/workflows/trigger-targetted-tests-on-every-new-env-deployment.yml"
+          echo "BrowserStack Test Run Status: https://observability.browserstack.com/projects/playwright-sandbox/builds?search=${{ github.event.repository.name }}"
