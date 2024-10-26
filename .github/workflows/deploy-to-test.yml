@@ -1,0 +1,87 @@
+name: 🟡 deploy-to-test
+
+on:
+  repository_dispatch:
+    types: ["test-run-completed-on-dev-for-employee-service"]
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: false
+        description: To deploy artifacts from a specific tag
+        type: string
+
+run-name: deploy ${{ github.event.repository.name }} to test
+
+jobs:
+  verify-to-auto-deploy-test:
+    runs-on: ubuntu-latest
+    outputs:
+      tagToUse: ${{ steps.resolve-and-print-tagToUse.outputs.tagToUse }}
+    steps:
+      - name: Log event details
+        if: ${{ github.event_name == 'repository_dispatch' }}
+        shell: bash
+        run: |
+            echo "Event sender: ${{ github.event.client_payload.github.event.repository.full_name }}"
+            echo "TAG_OF_TESTS_EXECUTED: ${{ github.event.client_payload.TAG_OF_TESTS_EXECUTED }}"
+            echo "TEST_ENV: ${{ github.event.client_payload.TEST_ENV }}"
+            echo "TEST_RUN_RESULT: ${{ github.event.client_payload.TEST_RUN_RESULT }}"
+            echo "TAG: ${{ github.event.client_payload.TAG }}"
+
+      - name: Verify and auto deploy TEST environment, if test run on dev was successful.
+        if: ${{ github.event_name == 'repository_dispatch' }}
+        shell: bash
+        run: |
+            if [ ${{ github.event.client_payload.TEST_RUN_RESULT }} == 'passed' ]; then
+              echo "Tests were successful. Auto deploying test environment"
+            else
+              echo "There are test failures so we will not auto deploy test environment."  
+              echo "Analyse failures and if the failures are acceptable, do a manual deployment."  
+              exit 1
+            fi
+
+      - name: Resolve and print tagToUse
+        id: resolve-and-print-tagToUse
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+              echo "tagToUse=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+              tag_to_print=${{ inputs.tag }}
+            elif [ "${{ github.event_name }}" == "repository_dispatch" ]; then
+              echo "tagToUse=${{ github.event.client_payload.TAG }}" >> "$GITHUB_OUTPUT"
+              tag_to_print=${{ github.event.client_payload.TAG }}
+            else 
+              echo "${{ github.event_name }} mode not supported to get desired imageTag. Contact DevOps team for support."
+              exit 1
+          fi
+          echo "tagToUse: $tag_to_print"
+          
+  deploy_service-to-test:
+    needs: [verify-to-auto-deploy-test]
+    name: deploy employee-service to test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Dummy steps just to demonstrate the concept  
+      - name: deploy application
+        run: |
+          echo "App deployed using tag: ${{ needs.verify-to-auto-deploy-test.outputs.tagToUse }}"
+  
+  notify:
+    runs-on: ubuntu-latest
+    name: trigger e2e tests.
+    needs: deploy_service-to-test
+    strategy:
+      matrix:
+        repos: [ 'PramodKumarYadav/playwright-sandbox' ]
+    steps:
+      - name: Dispatch event to repository
+        uses: peter-evans/repository-dispatch@v3.0.0
+        with:
+          token: ${{ secrets.PAT_LATEST }}
+          repository: ${{ matrix.repos }}
+          event-type: ${{ github.event.repository.name }}-test-deployed
+          client-payload: '{ "github": ${{ toJson(github) }},"TEST_ENV": "test" ,  "TAG_OF_TESTS_TO_RUN": "${{ github.event.repository.name }}"}'
+
